@@ -12,12 +12,12 @@ namespace mbrot
         public MainWindow()
         {
             InitializeComponent();
-            this.DoubleBuffered = true;
         }
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
             this.ClientSize = new Size(800, 800);
+
             var watch = Stopwatch.StartNew();
             Mandel(2000, 2000);
             watch.Stop();
