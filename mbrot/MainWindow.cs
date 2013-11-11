@@ -27,11 +27,13 @@ namespace mbrot
             this.Text += " - " + elapsedMs + " milliseconds";
         }
 
-        private const int MaxIterations = 500;
+        // Fields needed for the faster generator
+        private const int MaxIterations = 100;
         private const double MinReal = -2.0;
         private const double MaxReal = 2.0;
         private const double MinImag = -2.0;
         private const double MaxImag = 2.0;
+
         private void Mandel(int imageWidth, int imageHeight)
         {
             double XScale = (MaxReal - MinReal) / (imageWidth);
@@ -62,6 +64,7 @@ namespace mbrot
                       {
                           double Z_re2 = Z_re * Z_re, Z_im2 = Z_im * Z_im;
 
+
                           if (Z_re2 + Z_im2 > 4)
                           {
                               isInside = false;
@@ -75,12 +78,17 @@ namespace mbrot
                       }
 
                       if (isInside)
+                      {
                           unchecked
                           {
                               rgbValues[index] = (int)0xff000000;
                           }
+                      }
                       else
+                      {
                           rgbValues[index] = MapColor(iterations).ToArgb();
+                      }
+
 
                       index += imageWidth;
                   }
@@ -89,76 +97,7 @@ namespace mbrot
             Marshal.Copy(rgbValues, 0, ptr, pixels);
             bitmap.UnlockBits(bitmapData);
 
-            this.BackgroundImage = bitmap;
-
-            try
-            {
-                bitmap.Save("fractal.png", ImageFormat.Png);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-        }
-
-
-        /// <summary>
-        /// A function that generates the fractal slower. The slowless might be cause because I am using the Complex class from System.Numerics
-        /// </summary>
-        /// <param name="imageWidth"></param>
-        /// <param name="imageHeight"></param>
-        private void MandelSlower(int imageWidth, int imageHeight)
-        {
-            Fractal mandelBrot = new Fractal(imageWidth, imageHeight, 100);
-
-            Bitmap bitmap = new Bitmap(imageWidth, imageHeight);
-            BitmapData bitmapData = bitmap.LockBits(new Rectangle(0, 0, imageWidth, imageHeight), ImageLockMode.ReadWrite, bitmap.PixelFormat);
-
-            IntPtr ptr = bitmapData.Scan0;
-            int pixels = bitmap.Width * bitmap.Height;
-
-            Int32[] rgbValues = new Int32[pixels];
-
-            Parallel.For(0, imageWidth, (x) =>
-            {
-                int index = x;
-
-                for (int y = 0; y < imageHeight; y++)
-                {
-                    Complex C = new Complex(Fractal.MinReal + x * mandelBrot.XScale, Fractal.MaxImag - y * mandelBrot.YScale);
-                    Complex Z = new Complex(0, 0);
-
-                    bool isInside = true;
-                    int iterations = 0;
-
-                    for (int n = 0; n < mandelBrot.MaxIterations; n++)
-                    {
-                        if (Z.Magnitude > 4)
-                        {
-                            isInside = false;
-                            break;
-                        }
-
-                        iterations++;
-
-                        Z = Complex.Pow(Z, 2) + C;
-                    }
-
-                    if (isInside)
-                        unchecked
-                        {
-                            rgbValues[index] = (int)0xff000000;
-                        }
-                    else
-                        rgbValues[index] = MapColor(iterations).ToArgb();
-
-                    index += imageWidth;
-                }
-            });
-
-            Marshal.Copy(rgbValues, 0, ptr, pixels);
-            bitmap.UnlockBits(bitmapData);
-
+            bitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
             this.BackgroundImage = bitmap;
 
             try
@@ -178,5 +117,6 @@ namespace mbrot
             int B = 210;
             return Color.FromArgb(R, G, B);
         }
+
     }
 }
