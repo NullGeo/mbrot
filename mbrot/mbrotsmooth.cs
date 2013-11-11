@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -72,7 +73,6 @@ namespace mbrot
 
                 for (int y = 0; y < imageHeight; y++)
                 {
-
                     Complex Z = Complex.Zero;
                     Complex C = new Complex(ReaC, ImaC);
 
