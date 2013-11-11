@@ -24,6 +24,8 @@ namespace mbrot
 
             this.fractalOptions = fractalOptions;
 
+            FixAspectRatio();
+
             if (colors == null)
             {
                 _colors = new List<Color>(COLOR_COUNT);
@@ -75,11 +77,11 @@ namespace mbrot
 
                     if (iterations >= fractalOptions.MaxIterations)
                     {
-                        rgbValues[index] = 0x000000;
+                        rgbValues[index] = Color.Black.ToArgb();
                     }
                     else
                     {
-                        for (int i = 0; i < 3; i++)
+                        for (int i = 0; i < 5; i++)
                         {
                             Z = Z * Z + C;
                             iterations++;
@@ -116,6 +118,29 @@ namespace mbrot
             byte g = (byte)(_colors[color1].G * t1 + _colors[color2].G * t2);
             byte b = (byte)(_colors[color1].B * t1 + _colors[color2].B * t2);
             return Color.FromArgb(255, r, g, b);
+        }
+
+        private void FixAspectRatio()
+        {
+            double tempHeight, tempWidth, midpoint;
+
+            double desiredAR = (fractalOptions.MaxImag - fractalOptions.MinImag) / (fractalOptions.MaxReal - fractalOptions.MinReal);
+            double bitmapAR = bitmap.Height / (double)bitmap.Width;
+
+            if (desiredAR > bitmapAR)
+            {
+                tempWidth = (fractalOptions.MaxImag - fractalOptions.MinImag) / bitmapAR;
+                midpoint = (fractalOptions.MaxReal + fractalOptions.MinReal) / 2;
+                fractalOptions.MinReal = midpoint - tempWidth / 2;
+                fractalOptions.MaxReal = midpoint + tempWidth / 2;
+            }
+            else
+            {
+                tempHeight = (fractalOptions.MaxReal - fractalOptions.MinReal) * bitmapAR;
+                midpoint = (fractalOptions.MaxImag + fractalOptions.MinImag) / 2;
+                fractalOptions.MinImag = midpoint - tempHeight / 2;
+                fractalOptions.MaxImag = midpoint + tempHeight / 2;
+            }
         }
     }
 

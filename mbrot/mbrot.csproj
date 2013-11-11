@@ -72,12 +72,6 @@
     <Compile Include="MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="mbrotsmooth.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="mbrotsmooth.Designer.cs">
-      <DependentUpon>mbrotsmooth.cs</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

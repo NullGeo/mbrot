@@ -22,7 +22,7 @@ namespace mbrot
 
             var watch = Stopwatch.StartNew();
 
-            FractalBuilder builder = new FractalBuilder(1000, 1000, new FractalOptions());
+            FractalBuilder builder = new FractalBuilder(1000, 800, new FractalOptions());
             this.BackgroundImage = builder.Build();
 
             watch.Stop();
